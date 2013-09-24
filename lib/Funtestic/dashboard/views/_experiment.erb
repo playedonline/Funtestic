@@ -1,0 +1,125 @@
+<% unless goal.nil? %>
+  <% experiment_class = "experiment experiment_with_goal" %>
+<% else %>
+  <% experiment_class = "experiment" %>
+<% end %>
+<div class="<%= experiment_class %>">
+  <div class="experiment-header">
+    <h2>
+      Experiment: <%= experiment.name %>
+      <% if experiment.version > 0 %><span class='version'>v<%= experiment.version %></span><% end %>
+      <% unless goal.nil? %><span class='goal'>Goal:<%= goal %></span><% end %>
+    </h2>
+
+    <% if goal.nil? %>
+      <div class='inline-controls'>
+        <small><%= experiment.start_time ? experiment.start_time.strftime('%d-%m-%Y %H:%M:%S %z') : 'Unknown' %></small>
+        <form action="<%= url "/reset/#{experiment.name}" %>" method='post' onclick="return confirmReset()">
+          <input type="submit" value="Reset Data">
+        </form>
+        <form action="<%= url "/#{experiment.name}" %>" method='post' onclick="return confirmDelete()">
+          <input type="hidden" name="_method" value="delete"/>
+          <input type="submit" value="Delete" class="red">
+        </form>
+      </div>
+    <% end %>
+  </div>
+  <table>
+    <tr>
+      <th>Alternative Name</th>
+      <th>Participants</th>
+      <!--<th>Non-finished</th>-->
+      <th>Attempts</th>
+      <th>Completed (single per user)</th>
+      <th>Conversions (multi per user) </th>
+      <th>Single Conversion Rate</th>
+      <th>Conversion Rate</th>
+      <% event_types = experiment.event_types %>
+      <% event_types.each do |event_name|%>
+        <th><%= event_name%></th>
+      <% end %>
+      <!--<th>Confidence</th>-->
+      <th>Finish</th>
+    </tr>
+
+    <% total_participants = total_completed = total_unfinished = total_conversions = total_attempts = 0 %>
+    <% experiment.alternatives.each do |alternative| %>
+      <tr>
+        <td>
+          <%= alternative.name %>
+          <% if alternative.control? %>
+            <em>control</em>
+          <% end %>
+        </td>
+        <td><%= alternative.participant_count %></td>
+        <td><%= alternative.attempt_count %></td>
+        <!--<td><= alternative.unfinished_count %></td>-->
+        <td><%= alternative.completed_count(goal) %></td>
+        <td><%= alternative.conversion_count(goal) %></td>
+        <td><%= number_to_percentage(alternative.single_conversion_rate(goal)) %>%</td>
+        <td>
+          <%= number_to_percentage(alternative.conversion_rate(goal)) %>%
+          <!--< if experiment.control.conversion_rate(goal) > 0 && !alternative.control? %>-->
+            <!--< if alternative.conversion_rate(goal) > experiment.control.conversion_rate(goal) %>-->
+              <!--<span class='better'>-->
+                <!--+<= number_to_percentage((alternative.conversion_rate(goal)/experiment.control.conversion_rate(goal))-1) %>%-->
+              <!--</span>-->
+            <!--< elsif alternative.conversion_rate(goal) < experiment.control.conversion_rate(goal) %>-->
+              <!--<span class='worse'>-->
+                <!--<= number_to_percentage((alternative.conversion_rate(goal)/experiment.control.conversion_rate(goal))-1) %>%-->
+              <!--</span>-->
+            <!--< end  %>-->
+          <!--< end %>-->
+        </td>
+        <% event_types.each do |event_name|%>
+            <td> <%= alternative.events_hash[event_name] %></td>
+        <% end %>
+
+
+
+        <!--<td>-->
+          <!--<span title='z-score: <= round(alternative.z_score(goal), 3) %>'><= confidence_level(alternative.z_score(goal)) %></span>-->
+        <!--</td>-->
+        <td>
+          <% if experiment.winner %>
+            <% if experiment.winner.name == alternative.name %>
+              Winner
+            <% else %>
+              Loser
+            <% end %>
+          <% else %>
+            <form action="<%= url experiment.name %>" method='post' onclick="return confirmWinner()">
+              <input type='hidden' name='alternative' value='<%= alternative.name %>'>
+              <input type="submit" value="Use this" class="green">
+            </form>
+          <% end %>
+        </td>
+      </tr>
+
+      <% total_participants += alternative.participant_count %>
+      <% total_attempts += alternative.attempt_count(goal) %>
+      <% total_unfinished += alternative.unfinished_count %>
+      <% total_completed += alternative.completed_count(goal) %>
+      <% total_conversions += alternative.conversion_count(goal) %>
+
+  <% end %>
+
+    <tr class="totals">
+      <td>Totals</td>
+      <td><%= total_participants %></td>
+      <td><%= total_attempts %></td>
+      <!--<td><= total_unfinished %></td>-->
+      <td><%= total_completed %></td>
+      <td><%= total_conversions %></td>
+      <td>N/A</td>
+      <td>N/A</td>
+
+      <% event_types.each do |event_name|%>
+          <td> <%= experiment.event_totals[event_name] %></td>
+      <% end %>
+
+      <!--<td>N/A</td>-->
+      <td>N/A</td>
+    </tr>
+  </table>
+</div>

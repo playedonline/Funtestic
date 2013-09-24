@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'Funtestic/version'
+require 'funtestic/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "Funtestic"
-  spec.version       = Funtestic::VERSION
+  spec.name          = "funtestic"
+  spec.version       = funtestic::VERSION
   spec.authors       = ["chenbauer"]
   spec.email         = ["chen@funtomic.com"]
   spec.description   = %q{abtesting framework based on Split gem, with several adjustments to our needs}

@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in Funtestic.gemspec
+# Specify your gem's dependencies in funtestic.gemspec
 gemspec
