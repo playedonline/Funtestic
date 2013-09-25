@@ -5,7 +5,7 @@ require 'funtestic/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "funtestic"
-  spec.version       = funtestic::VERSION
+  spec.version       = Funtestic::VERSION
   spec.authors       = ["chenbauer"]
   spec.email         = ["chen@funtomic.com"]
   spec.description   = %q{abtesting framework based on Split gem, with several adjustments to our needs}
