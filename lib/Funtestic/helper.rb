@@ -1,6 +1,11 @@
 module Funtestic
   module Helper
 
+    # TODO: #Chen REMOVE THIS, use get_alternative_for_user_or_default instead
+    def abtest_participant? (experiment_name)
+      !!ab_user.keys.detect{|key| key.split(":")[0] == experiment_name}
+    end
+
     def get_alternative_for_user_or_default(experiment_name, default)
       experiment = Funtestic::Experiment.find(experiment_name)
       if (experiment.present?) && ab_user[experiment.key]
@@ -135,6 +140,14 @@ module Funtestic
 
     end
 
+    def track_alternative_event(experiment, alternative_name, event_data = {}) #event_data is hash of event name and how much incrememnt by
+      return true unless experiment.winner.nil?
+
+      trial = Trial.new(:experiment => experiment, :alternative => alternative_name)
+      trial.event(event_data)
+
+    end
+
     def finished(metric_descriptor, options = {:reset => true,:multiple_conversion => true})
       return if exclude_visitor? || Funtestic.configuration.disabled?
       metric_descriptor, goals = normalize_experiment(metric_descriptor)
@@ -169,6 +182,17 @@ module Funtestic
       Funtestic.configuration.db_failover_on_db_error.call(e)
     end
 
+    def abtest_event_for_alternative(experiment_name, alternative_name, event_data = {})
+      return if exclude_visitor? || Split.configuration.disabled?
+      experiments = Metric.possible_experiments(experiment_name)
+
+      if experiments.any? and alternative_name.present?
+        track_alternative_event(experiments.first, alternative_name, event_data)
+      end
+    rescue => e
+      raise unless Split.configuration.db_failover
+      Split.configuration.db_failover_on_db_error.call(e)
+    end
 
     def override_present?(experiment_name)
       defined?(params) && params[experiment_name]

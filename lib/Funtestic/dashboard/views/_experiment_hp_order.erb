@@ -1,0 +1,74 @@
+<% unless goal.nil? %>
+    <% experiment_class = "experiment experiment_with_goal" %>
+<% else %>
+    <% experiment_class = "experiment" %>
+<% end %>
+<div class="<%= experiment_class %>">
+  <div class="experiment-header">
+    <h2>
+      Experiment: <%= experiment.name %>
+      <% if experiment.version > 1 %><span class='version'>v<%= experiment.version %></span><% end %>
+      <% unless goal.nil? %><span class='goal'>Goal:<%= goal %></span><% end %>
+    </h2>
+
+    <% if goal.nil? %>
+        <div class='inline-controls'>
+          <small><%= experiment.start_time ? experiment.start_time.strftime('%Y-%m-%d') : 'Unknown' %></small>
+          <form action="<%= url "/reset/#{experiment.name}" %>" method='post' onclick="return confirmReset()">
+            <input type="submit" value="Reset Data">
+          </form>
+          <form action="<%= url "/#{experiment.name}" %>" method='post' onclick="return confirmDelete()">
+            <input type="hidden" name="_method" value="delete"/>
+            <input type="submit" value="Delete" class="red">
+          </form>
+        </div>
+    <% end %>
+  </div>
+  <table>
+    <tr>
+      <th>Alternative Name</th>
+      <th>Participants</th>
+      <% event_types = experiment.event_types %>
+      <% event_types.each do |event_name|%>
+          <th><%= event_name%></th>
+      <% end %>
+      <th>CTR</th>
+      <th>Install CTR</th>
+      <th>CTR2</th>
+    </tr>
+
+    <% total_participants = total_completed = total_unfinished = total_conversions = 0 %>
+    <% experiment.alternatives.each do |alternative| %>
+        <tr>
+          <td>
+            <%= alternative.name %>
+            <% if alternative.control? %>
+                <em>control</em>
+            <% end %>
+          </td>
+          <td><%= alternative.participant_count %></td>
+          <% event_types.each do |event_name|%>
+              <td> <%= alternative.events_hash[event_name] %></td>
+          <% end %>
+          <td> <%= alternative.events_hash["impressions"].to_f > 0 ? ((alternative.events_hash["first_click"].to_f/alternative.events_hash["impressions"].to_f)*100).round(3) : 0 %>%</td>
+          <td> <%= alternative.events_hash["impressions"].to_f > 0 ? ((alternative.events_hash["install_click"].to_f/alternative.events_hash["impressions"].to_f)*100).round(3) : 0 %>%</td>
+          <td> <%= alternative.events_hash["first_click"].to_f > 0 ? ((alternative.events_hash["install_click"].to_f/alternative.events_hash["first_click"].to_f)*100).round(3) : 0 %>%</td>
+        </tr>
+
+        <% total_participants += alternative.participant_count %>
+    <% end %>
+
+    <tr class="totals">
+      <td>Totals</td>
+      <td><%= total_participants %></td>
+
+      <% event_types.each do |event_name|%>
+          <td> <%= experiment.event_totals[event_name] %></td>
+      <% end %>
+
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+  </table>
+</div>
