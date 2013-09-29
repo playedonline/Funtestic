@@ -213,6 +213,7 @@ module Funtestic
       Funtestic.redis.hsetnx key, 'participant_count', 0
       Funtestic.redis.hsetnx key, 'completed_count', 0
       Funtestic.redis.hsetnx key, 'conversion_count', 0
+      Funtestic.redis.hsetnx key, 'attempt_count', 0
     end
 
     def validate!
@@ -222,7 +223,7 @@ module Funtestic
     end
 
     def reset
-      Funtestic.redis.hmset key, 'participant_count', 0, 'completed_count', 0, 'conversion_count', 0
+      Funtestic.redis.hmset key, 'participant_count', 0, 'completed_count', 0, 'conversion_count', 0, 'attempt_count', 0
 
       Funtestic.redis.del key+":events"
 
@@ -233,6 +234,8 @@ module Funtestic
           field = "completed_count:#{g}"
           Funtestic.redis.hset key, field, 0
           field = "conversion_count:#{g}"
+          Funtestic.redis.hset key, field, 0
+          field = "attempt_count:#{g}"
           Funtestic.redis.hset key, field, 0
         end
       end
