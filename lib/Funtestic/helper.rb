@@ -1,11 +1,6 @@
 module Funtestic
   module Helper
 
-    # TODO: #Chen REMOVE THIS, use get_alternative_for_user_or_default instead
-    def abtest_participant? (experiment_name)
-      !!ab_user.keys.detect{|key| key.split(":")[0] == experiment_name}
-    end
-
     def get_alternative_for_user_or_default(experiment_name, default)
       experiment = Funtestic::Experiment.find(experiment_name)
       if (experiment.present?) && ab_user[experiment.key]
