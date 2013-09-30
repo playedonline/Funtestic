@@ -1,22 +1,15 @@
-# Split
+# Funtestic
 
+This gem is a copy of Split gem, but with several adjustments to our needs.
 Split is a rack based ab testing framework designed to work with Rails, Sinatra or any other rack based app.
-
 Split is heavily inspired by the Abingo and Vanity rails ab testing plugins and Resque in its use of Redis.
-
 Split is designed to be hacker friendly, allowing for maximum customisation and extensibility.
-
-[![Gem Version](https://badge.fury.io/rb/split.png)](http://badge.fury.io/rb/split)
-[![Build Status](https://secure.travis-ci.org/andrew/split.png?branch=master)](http://travis-ci.org/andrew/split)
-[![Dependency Status](https://gemnasium.com/andrew/split.png)](https://gemnasium.com/andrew/split)
-[![Code Climate](https://codeclimate.com/github/andrew/split.png)](https://codeclimate.com/github/andrew/split)
-[![Coverage Status](https://coveralls.io/repos/andrew/split/badge.png)](https://coveralls.io/r/andrew/split)
 
 ## Requirements
 
-Split uses redis as a datastore.
+Funtestic uses redis as a datastore.
 
-Split only supports redis 2.0 or greater.
+Funtestic only supports redis 2.0 or greater.
 
 If you're on OS X, Homebrew is the simplest way to install Redis:
 
@@ -29,10 +22,10 @@ You now have a Redis daemon running on 6379.
 
 ## Setup
 
-If you are using bundler add split to your Gemfile:
+If you are using bundler add Funtestic to your Gemfile:
 
 ``` ruby
-gem 'split'
+gem 'funtestic', "0.0.11",:git => 'git@github.com:playedonline/Funtestic.git'
 ```
 
 Then run:
@@ -40,55 +33,9 @@ Then run:
 ```bash
 $ bundle install
 ```
-
-Otherwise install the gem:
-
-```bash
-$ gem install split
-```
-
-and require it in your project:
-
-```ruby
-require 'split'
-```
-
-### SystemTimer
-
-If you are using Redis on Ruby 1.8.x then you will likely want to also use the SystemTimer gem if you want to make sure the Redis client will not hang.
-
-Put the following in your gemfile as well:
-
-```
-gem 'SystemTimer'
-```
-
 ### Rails 3
 
-Split is autoloaded when rails starts up, as long as you've configured redis it will 'just work'.
-
-### Rails 2.3
-
-To configure Rails 2.3 with Split you need to mix in the helper methods. Add the following lines to config/initializers.split.rb:
-
-```ruby
-ActionController::Base.send :include, Split::Helper
-ActionController::Base.helper Split::Helper
-```
-
-### Sinatra
-
-To configure sinatra with Split you need to enable sessions and mix in the helper methods. Add the following lines at the top of your sinatra app:
-
-```ruby
-class MySinatraApp < Sinatra::Base
-  enable :sessions
-  helpers Split::Helper
-
-  get '/' do
-  ...
-end
-```
+Funtestic is autoloaded when rails starts up, as long as you've configured redis it will 'just work'.
 
 ## Usage
 
@@ -98,7 +45,8 @@ To begin your ab test use the `ab_test` method, naming your experiment with the 
 
 It can be used to render different templates, show different text or any other case based logic.
 
-`finished` is used to make a completion of an experiment, or conversion.
+`report_attempt` is used to track an action which we consider prior to conversion,
+`finished` is used to make a conversion.
 
 Example: View
 
