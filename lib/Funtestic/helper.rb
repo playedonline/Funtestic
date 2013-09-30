@@ -316,9 +316,9 @@ module Funtestic
       send(Funtestic.configuration.on_trial_choose, trial) if Funtestic.configuration.on_trial_choose
     end
 
-    def call_trial_complete_hook(trial)
-      send(Funtestic.configuration.on_trial_complete, trial) if Funtestic.configuration.on_trial_complete
-    end
+    #def call_trial_complete_hook(trial)
+    #  send(Funtestic.configuration.on_trial_complete, trial) if Funtestic.configuration.on_trial_complete
+    #end
 
     def keys_without_experiment(keys, experiment_key)
       # Remove keys that belong to the experiment in experiment_key (ie - 'experiment_key', 'experiment_key:finished', 'experiment_key:attempt')

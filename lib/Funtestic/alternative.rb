@@ -218,7 +218,7 @@ module Funtestic
 
     def validate!
       unless String === @name || hash_with_correct_values?(@name)
-        raise ArgumentError, 'Alternative must be a string'
+        raise ArgumentError, 'Alternative must be a string or a valid Hash (include at least :name, and optionally :percent and :channel keys)'
       end
     end
 
@@ -249,7 +249,7 @@ module Funtestic
     private
 
     def hash_with_correct_values?(name)
-      Hash === name && String === name.keys.first && Float(name.values.first) rescue false
+      Hash === name && !name.keys.detect{|key|[:name, :percent, :channel].exclude? key} rescue false
     end
 
     def key
