@@ -1,5 +1,5 @@
 %w[session_adapter cookie_adapter].each do |f|
-  require "funtestic/persistence/#{f}"
+  require "Funtestic/persistence/#{f}"
 end
 
 module Funtestic

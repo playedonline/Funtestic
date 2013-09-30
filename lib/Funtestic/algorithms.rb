@@ -1,3 +1,3 @@
 %w[weighted_sample whiplash].each do |f|
-  require "funtestic/algorithms/#{f}"
+  require "Funtestic/algorithms/#{f}"
 end
