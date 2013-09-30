@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'funtestic'
 require 'bigdecimal'
-require 'funtestic/dashboard/helpers'
+require 'Funtestic/dashboard/helpers'
 
 module Funtestic
   class Dashboard < Sinatra::Base

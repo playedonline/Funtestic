@@ -1,6 +1,6 @@
 require_relative "spec_helper"
-require 'funtestic/experiment'
-require 'funtestic/algorithms'
+require 'Funtestic/experiment'
+require 'Funtestic/algorithms'
 require 'time'
 
 describe Funtestic::Experiment do

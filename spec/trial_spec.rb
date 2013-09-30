@@ -1,5 +1,5 @@
 require_relative 'spec_helper'
-require 'funtestic/trial'
+require 'Funtestic/trial'
 
 describe Funtestic::Trial do
   it "should be initializeable" do

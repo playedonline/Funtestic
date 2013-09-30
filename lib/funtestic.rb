@@ -1,8 +1,8 @@
 %w[algorithms extensions metric trial experiment alternative helper version configuration persistence exceptions].each do |f|
-  require "funtestic/#{f}"
+  require "Funtestic/#{f}"
 end
 
-require 'funtestic/engine' if defined?(Rails) && Rails::VERSION::MAJOR >= 3
+require 'Funtestic/engine' if defined?(Rails) && Rails::VERSION::MAJOR >= 3
 require 'redis/namespace'
 
 module Funtestic

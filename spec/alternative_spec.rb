@@ -1,5 +1,5 @@
 require_relative "spec_helper"
-require 'funtestic/alternative'
+require 'Funtestic/alternative'
 
 describe Funtestic::Alternative do
 

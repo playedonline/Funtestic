@@ -1,5 +1,5 @@
 require_relative "spec_helper"
-require 'funtestic/dashboard/helpers'
+require 'Funtestic/dashboard/helpers'
 require 'bigdecimal'
 
 include Funtestic::DashboardHelpers

@@ -1,6 +1,6 @@
 require_relative "spec_helper"
 require 'rack/test'
-require 'funtestic/dashboard'
+require 'Funtestic/dashboard'
 
 describe Funtestic::Dashboard do
   include Rack::Test::Methods

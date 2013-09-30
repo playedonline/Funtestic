@@ -1,5 +1,5 @@
 require_relative 'spec_helper'
-require 'funtestic/metric'
+require 'Funtestic/metric'
 
 describe Funtestic::Metric do
   describe 'possible experiments' do
