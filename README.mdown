@@ -1,6 +1,6 @@
 # Funtestic
 
-This gem is a copy of Split gem, but with several adjustments to our needs.
+This gem is a copy of [Split](http://github.com/andrew/split) gem, but with several adjustments to our needs.
 Split is a rack based ab testing framework designed to work with Rails, Sinatra or any other rack based app.
 Split is heavily inspired by the Abingo and Vanity rails ab testing plugins and Resque in its use of Redis.
 Split is designed to be hacker friendly, allowing for maximum customisation and extensibility.
