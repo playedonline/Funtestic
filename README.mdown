@@ -22,7 +22,7 @@ You now have a Redis daemon running on 6379.
 
 ## Setup
 
-If you are using bundler add Funtestic to your Gemfile:
+Add Funtestic to your Gemfile (use the latest version):
 
 ``` ruby
 gem 'funtestic', "0.0.11",:git => 'git@github.com:playedonline/Funtestic.git'
@@ -45,8 +45,9 @@ To begin your ab test use the `ab_test` method, naming your experiment with the 
 
 It can be used to render different templates, show different text or any other case based logic.
 
-`report_attempt` is used to track an action which we consider prior to conversion,
+`report_attempt` is used to track an action which we consider an action performed prior to conversion that might lead to a conversion,
 `finished` is used to make a conversion.
+Conversion rate can then be calculated as conversion / converstion attempts.
 
 Example: View
 
@@ -80,7 +81,15 @@ Example: Conversion tracking (in a view)
 Thanks for signing up, dude! <% finished("signup_page_redesign") %>
 ```
 
-You can find more examples, tutorials and guides on the [wiki](https://github.com/andrew/split/wiki).
+You can find more examples, tutorials and guides on the [Split wiki](https://github.com/andrew/split/wiki).
+
+Note that in some tests we may want to allow multiple conversions & conversion attempts per user, whereas in others we don't. To disable multiple
+conversion pass in the following option:
+
+```ruby
+```
+When multiple conversion is disable, calling `report_attempt` or `finished` more than once per user will simply be ignored.
+
 
 ## Extras
 
