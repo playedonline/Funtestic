@@ -227,12 +227,6 @@ mount Funtestic::Dashboard, at: 'funtestic', :constraints => lambda { |request|
     request.env['warden'].authenticated?
     # or even check any other condition such as request.env['warden'].user.is_admin?
 }
-
-match "/split" => Split::Dashboard, :anchor => false, :constraints => lambda { |request|
-  request.env['warden'].authenticated? # are we authenticated?
-  request.env['warden'].authenticate! # authenticate if not already
-  # or even check any other condition such as request.env['warden'].user.is_admin?
-}
 ```
 
 More information on this [here](http://steve.dynedge.co.uk/2011/12/09/controlling-access-to-routes-and-rack-apps-in-rails-3-with-devise-and-warden/)
@@ -243,25 +237,25 @@ More information on this [here](http://steve.dynedge.co.uk/2011/12/09/controllin
 
 ## Configuration
 
-You can override the default configuration options of Split like so:
+You can override the default configuration options of Funtestic like so:
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.db_failover = true # handle redis errors gracefully
   config.db_failover_on_db_error = proc{|error| Rails.logger.error(error.message) }
   config.allow_multiple_experiments = true
   config.enabled = true
-  config.persistence = Split::Persistence::SessionAdapter
+  config.persistence = Funtestic::Persistence::SessionAdapter
 end
 ```
 
 ### Filtering
 
 In most scenarios you don't want to have AB-Testing enabled for web spiders, robots or special groups of users.
-Split provides functionality to filter this based on a predefined, extensible list of bots, IP-lists or custom exclude logic.
+Funtestic provides functionality to filter this based on a predefined, extensible list of bots, IP-lists or custom exclude logic.
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   # bot config
   config.robot_regex = /my_custom_robot_regex/ # or
   config.bots['newbot'] = "Description for bot with 'newbot' user agent, which will be added to config.robot_regex for exclusion"
@@ -281,14 +275,14 @@ in a hash. This hash can control your experiment's alternatives, weights,
 algorithm and if the experiment resets once finished:
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.experiments = {
     "my_first_experiment" => {
       :alternatives => ["a", "b"],
       :resettable => false
     },
     "my_second_experiment" => {
-      :algorithm => 'Split::Algorithms::Whiplash',
+      :algorithm => 'Funtestic::Algorithms::Whiplash',
       :alternatives => [
         { :name => "a", :percent => 67 },
         { :name => "b", :percent => 33 }
@@ -301,7 +295,7 @@ end
 You can also store your experiments in a YAML file:
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.experiments = YAML.load_file "config/experiments.yml"
 end
 ```
@@ -342,7 +336,7 @@ your code. You can use the configuration hash to do this, thanks to
 the `:metric` option.
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.experiments = {
     "my_first_experiment" => {
       :alternatives => ["a", "b"],
@@ -362,8 +356,8 @@ finished(:my_metric)
 You can also create a new metric by instantiating and saving a new Metric object.
 
 ```ruby
-Split::Metric.new(:my_metric)
-Split::Metric.save
+Funtestic::Metric.new(:my_metric)
+Funtestic::Metric.save
 ```
 
 #### Goals
@@ -378,7 +372,7 @@ ab_test({"link_color" => ["purchase", "refund"]}, "red", "blue")
 or you can you can define them in a configuration file:
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.experiments = {
     "link_color" => {
       :alternatives => ["red", "blue"],
@@ -406,55 +400,59 @@ for example to log these errors via Rails.logger.
 
 ### Redis
 
-You may want to change the Redis host and port Split connects to, or
+You may want to change the Redis host and port Funtestic connects to, or
 set various other options at startup.
 
-Split has a `redis` setter which can be given a string or a Redis
-object. This means if you're already using Redis in your app, Split
+Funtestic has a `redis` setter which can be given a string or a Redis
+object. This means if you're already using Redis in your app, Funtestic
 can re-use the existing connection.
 
-String: `Split.redis = 'localhost:6379'`
+String: `Funtestic.redis = 'localhost:6379'`
 
-Redis: `Split.redis = $redis`
+Redis: `Funtestic.redis = $redis`
 
-For our rails app we have a `config/initializers/split.rb` file where
-we load `config/split.yml` by hand and set the Redis information
-appropriately.
-
-Here's our `config/split.yml`:
-
-```yml
-development: localhost:6379
-test: localhost:6379
-staging: redis1.example.com:6379
-fi: localhost:6379
-production: redis1.example.com:6379
-```
-
-And our initializer:
+For our rails apps we have a `config/initializers/funtestic.rb` file where
+we set the Redis information appropriately.
+Here's our initializer `config/initializers/funtestic.rb`:
 
 ```ruby
-rails_root = ENV['RAILS_ROOT'] || File.dirname(__FILE__) + '/../..'
-rails_env = ENV['RAILS_ENV'] || 'development'
 
-split_config = YAML.load_file(rails_root + '/config/split.yml')
-Split.redis = split_config[rails_env]
+Funtestic.configure do |config|
+  config.db_failover = true # handle redis errors gracefully
+  config.db_failover_on_db_error = proc { |error| Rails.logger.error(error.message) }
+  config.allow_multiple_experiments = true
+  config.enabled = true
+  config.persistence = Funtestic::Persistence::CookieAdapter
+  config.on_attempt_reported = :handle_experiment_conversion_attempt
+  config.on_finish_reported = :handle_experiment_conversion
+
+  config.experiments = {...}
+end
+
+if Rails.env.production?
+  redis_config = YAML.load_file(Rails.root + 'config/redis.yml')[Rails.env]
+  redis_config_hash = {host: redis_config['host'], port: redis_config['port']}
+else
+  redis_config_hash ={:host => "localhost", :port => 6379}
+end
+Funtestic.redis = "#{redis_config_hash[:host]}:#{redis_config_hash[:port]}"
+
 ```
 
 ## Namespaces
 
-If you're running multiple, separate instances of Split you may want
+If you're running multiple, separate instances of Funtestic you may want
 to namespace the keyspaces so they do not overlap. This is not unlike
 the approach taken by many memcached clients.
 
 This feature is provided by the [redis-namespace](https://github.com/defunkt/redis-namespace) library, which
-Split uses by default to separate the keys it manages from other keys
+Funtestic uses by default to separate the keys it manages from other keys
 in your Redis server.
 
-Simply use the `Split.redis.namespace` accessor:
+Simply use the `Funtestic.redis.namespace` accessor:
 
 ```ruby
-Split.redis.namespace = "split:blog"
+Funtestic.redis.namespace = "funtestic:blog"
 ```
 
 We recommend sticking this in your initializer somewhere after Redis
@@ -462,16 +460,16 @@ is configured.
 
 ## Outside of a Web Session
 
-Split provides the Helper module to facilitate running experiments inside web sessions.
+Funtestic provides the Helper module to facilitate running experiments inside web sessions.
 
 Alternatively, you can access the underlying Metric, Trial, Experiment and Alternative objects to
 conduct experiments that are not tied to a web session.
 
 ```ruby
 # create a new experiment
-experiment = Split::Experiment.find_or_create('color', 'red', 'blue')
+experiment = Funtestic::Experiment.find_or_create('color', 'red', 'blue')
 # create a new trial
-trial = Split::Trial.new(:experiment => experiment)
+trial = Funtestic::Trial.new(:experiment => experiment)
 # run trial
 trial.choose!
 # get the result, returns either red or blue
@@ -486,7 +484,7 @@ end
 
 ## Algorithms
 
-By default, Split ships with an algorithm that randomly selects from possible alternatives for a traditional a/b test.
+By default, Funtestic ships with an algorithm that randomly selects from possible alternatives for a traditional a/b test.
 
 An implementation of a bandit algorithm is also provided.
 
@@ -501,21 +499,6 @@ Users may also write their own algorithms. The default algorithm may be specifie
 ## Screencast
 
 Ryan bates has produced an excellent 10 minute screencast about split on the Railscasts site: [A/B Testing with Split](http://railscasts.com/episodes/331-a-b-testing-with-split)
-
-## Contributors
-
-Special thanks to the following people for submitting patches:
-
-* Lloyd Pick
-* Jeffery Chupp
-* Andrew Appleton
-* Phil Nash
-* Dave Goodchild
-* Ian Young
-* Nathan Woodhull
-* Ville Lautanala
-* Liu Jin
-* Peter Schröder
 
 ## Development
 
