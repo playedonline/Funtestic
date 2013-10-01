@@ -24,6 +24,10 @@ describe Funtestic::Helper do
       lambda { ab_test('xyz', 1, 2, 3) }.should raise_error
     end
 
+    it "should raise the appropriate error when passed booleans for alternatives" do
+      lambda { ab_test('xyz', true, false) }.should raise_error
+    end
+
     it "should raise the appropriate error when passed symbols for alternatives" do
       lambda { ab_test('xyz', :a, :b, :c) }.should raise_error
     end

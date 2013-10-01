@@ -47,7 +47,7 @@ It can be used to render different templates, show different text or any other c
 
 `report_attempt` is used to track a conversion attempt - an action which is performed prior to making a conversion that might lead to a conversion.
 `finished` is used to count a conversion.
-Conversion rate can then be calculated as conversion / converstion attempts.
+Conversion rate can then be calculated as conversion divided by converstion attempts.
 
 Example: View
 
@@ -66,6 +66,12 @@ def register_new_user
 end
 ```
 
+Example: Boolean alternatives:
+
+```ruby
+@logo_as_thumb = ab_test("logo_as_thumb_ab_test_17-9-13", "true", "false") == "true"
+```
+
 Example: Conversion tracking (in a controller!)
 
 ```ruby
@@ -81,15 +87,16 @@ Example: Conversion tracking (in a view)
 Thanks for signing up, dude! <% finished("signup_page_redesign") %>
 ```
 
-You can find more examples, tutorials and guides on the [Split wiki](https://github.com/andrew/split/wiki).
+You can find more examples, tutorials and guides on the [*Split* wiki](https://github.com/andrew/split/wiki).
 
 Note that in some tests we may want to allow multiple conversions & conversion attempts per user, whereas in others we don't. To disable multiple
 conversion pass in the following option:
 
 ```ruby
+report_attempt("logo_as_thumb_ab_test_17-9-13", {:multiple_conversion => false})
+finished("logo_as_thumb_ab_test_17-9-13", {:multiple_conversion => false})
 ```
-When multiple conversion is disable, calling `report_attempt` or `finished` more than once per user will simply be ignored.
-
+When multiple conversion is disabled, calling `report_attempt` or `finished` more than once per user will simply be ignored.
 
 ## Extras
 
