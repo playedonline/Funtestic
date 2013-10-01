@@ -7,7 +7,7 @@ Split is designed to be hacker friendly, allowing for maximum customisation and 
 
 ## Requirements
 
-Funtestic uses redis as a datastore.
+Funtestic doesn't use a database, it uses redis as a datastore.
 
 Funtestic only supports redis 2.0 or greater.
 
@@ -39,14 +39,14 @@ Funtestic is autoloaded when rails starts up, as long as you've configured redis
 
 ## Usage
 
-To begin your ab test use the `ab_test` method, naming your experiment with the first argument and then the different alternatives which you wish to test on as the other arguments.
+To begin your ab test use the `ab_test` method, naming your experiment with the first argument and then the different alternatives which you wish to test on as the other arguments (or define them in Configuration as explained later on).
 
 `ab_test` returns one of the alternatives, if a user has already seen that test they will get the same alternative as before, which you can use to split your code on.
 
 It can be used to render different templates, show different text or any other case based logic.
 
-`report_attempt` is used to track an action which we consider an action performed prior to conversion that might lead to a conversion,
-`finished` is used to make a conversion.
+`report_attempt` is used to track a conversion attempt - an action which is performed prior to making a conversion that might lead to a conversion.
+`finished` is used to count a conversion.
 Conversion rate can then be calculated as conversion / converstion attempts.
 
 Example: View
