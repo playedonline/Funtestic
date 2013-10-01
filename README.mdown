@@ -25,7 +25,7 @@ You now have a Redis daemon running on 6379.
 Add Funtestic to your Gemfile (use the latest version):
 
 ``` ruby
-gem 'funtestic', "0.0.11",:git => 'git@github.com:playedonline/Funtestic.git'
+gem 'funtestic', "0.0.11", :git => 'git@github.com:playedonline/Funtestic.git', :require => 'Funtestic/dashboard'
 ```
 
 Then run:
@@ -107,14 +107,12 @@ Perhaps you only want to show an alternative to 10% of your visitors because it 
 To do this you can pass a weight with each alternative in the following ways:
 
 ```ruby
-ab_test('homepage design', {'Old' => 20}, {'New' => 2})
+ab_test('homepage design', {:name => 'Old', :percent => 20}, {:name => 'New', :percent => 2})
 
-ab_test('homepage design', 'Old', {'New' => 0.1})
+ab_test('homepage design', 'Old', {:name => 'New', :percent => 0.1})
 
-ab_test('homepage design', {'Old' => 10}, 'New')
+ab_test('homepage design', {:name => 'Old', :percent => 10}, 'New')
 ```
-
-Note: If using ruby 1.8.x and weighted alternatives you should always pass the control alternative through as the second argument with any other alternatives as a third argument because the order of the hash is not preserved in ruby 1.8, ruby 1.9.1+ users are not affected by this bug.
 
 This will only show the new alternative to visitors 1 in 10 times, the default weight for an alternative is 1.
 
@@ -129,42 +127,30 @@ If you have an experiment called `button_color` with alternatives called `red` a
 
 will always have red buttons. This won't be stored in your session or count towards to results, unless you set the `store_override` configuration option.
 
-### Reset after completion
-
-When a user completes a test their session is reset so that they may start the test again in the future.
-
-To stop this behaviour you can pass the following option to the `finished` method:
-
-```ruby
-finished('experiment_name', :reset => false)
-```
-
-The user will then always see the alternative they started with.
-
 ### Multiple experiments at once
 
-By default Split will avoid users participating in multiple experiments at once. This means you are less likely to skew results by adding in more variation to your tests.
+By default Funtestic will avoid users participating in multiple experiments at once. This means you are less likely to skew results by adding in more variation to your tests.
 
 To stop this behaviour and allow users to participate in multiple experiments at once enable the `allow_multiple_experiments` config option like so:
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.allow_multiple_experiments = true
 end
 ```
 
 ### Experiment Persistence
 
-Split comes with two built-in persistence adapters for storing users and the alternatives they've been given for each experiment.
+Funtestic comes with two built-in persistence adapters for storing users and the alternatives they've been given for each experiment.
 
-By default Split will store the tests for each user in the session.
+By default Funtestic will store the tests for each user in the session.
 
-You can optionally configure Split to use a cookie or any custom adapter of your choosing.
+You can optionally configure Funtestic to use a cookie or any custom adapter of your choosing.
 
 #### Cookies
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.persistence = :cookie
 end
 ```
@@ -174,10 +160,10 @@ __Note:__ Using cookies depends on `ActionDispatch::Cookies` or any identical AP
 #### Custom Adapter
 
 Your custom adapter needs to implement the same API as existing adapters.
-See `Split::Persistance::CookieAdapter` or `Split::Persistence::SessionAdapter` for a starting point.
+See `Funtestic::Persistance::CookieAdapter` or `Funtestic::Persistence::SessionAdapter` for a starting point.
 
 ```ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.persistence = YourCustomAdapterClass
 end
 ```
@@ -190,7 +176,7 @@ alternative participation and goal completion.
 For example:
 
 ``` ruby
-Split.configure do |config|
+Funtestic.configure do |config|
   config.on_trial_choose   = :log_trial_choice
   config.on_trial_complete = :log_trial_complete
 end
@@ -213,40 +199,35 @@ end
 
 ## Web Interface
 
-Split comes with a Sinatra-based front end to get an overview of how your experiments are doing.
+Funtestic comes with a Sinatra-based front end to get an overview of how your experiments are doing.
 
-If you are running Rails 2: You can mount this inside your app using Rack::URLMap in your `config.ru`
-
-```ruby
-require 'split/dashboard'
-
-run Rack::URLMap.new \
-  "/"       => Your::App.new,
-  "/split" => Split::Dashboard.new
-```
-
-However, if you are using Rails 3: You can mount this inside your app routes by first adding this to the Gemfile:
+If you are using Rails 3: You can mount this inside your app routes by first adding this to the Gemfile:
 
 ```ruby
-gem 'split', :require => 'split/dashboard'
+gem 'funtestic', "0.0.11", :git => 'git@github.com:playedonline/Funtestic.git', :require => 'Funtestic/dashboard'
 ```
 
 Then adding this to config/routes.rb
 
 ```ruby
-mount Split::Dashboard, :at => 'split'
+mount Funtestic::Dashboard, at: 'funtestic'
 ```
 
-You may want to password protect that page, you can do so with `Rack::Auth::Basic` (in your split initializer file)
+You may want to password protect that page, you can do so with `Rack::Auth::Basic` (in your funtestic initializer file)
 
 ```ruby
-Split::Dashboard.use Rack::Auth::Basic do |username, password|
+Funtestic::Dashboard.use Rack::Auth::Basic do |username, password|
   username == 'admin' && password == 'p4s5w0rd'
 end
 ```
 
-You can even use Devise or any other Warden-based authentication method to authorize users. Just replace `mount Split::Dashboard, :at => 'split'` in `config/routes.rb` with the following:
+You can even use Devise or any other Warden-based authentication method to authorize users. Just replace `mount Funtestic::Dashboard, :at => 'funtestic'` in `config/routes.rb` with the following:
 ```ruby
+mount Funtestic::Dashboard, at: 'funtestic', :constraints => lambda { |request|
+    request.env['warden'].authenticated?
+    # or even check any other condition such as request.env['warden'].user.is_admin?
+}
+
 match "/split" => Split::Dashboard, :anchor => false, :constraints => lambda { |request|
   request.env['warden'].authenticated? # are we authenticated?
   request.env['warden'].authenticate! # authenticate if not already
