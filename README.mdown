@@ -117,7 +117,7 @@ config.experiments = {
 
 ### Events
 
-Each alternative also keeps a hash of custom counters called events. You can increment the values of your custom events using `abtest_event`, which will increment the specified counter by the specified amount for the alternative of the user.
+Each alternative also keeps a hash of custom counters called events. You can increment the values of your custom events using `abtest_event`, which will increment the specified counter by the specified amount for the alternative of the user (if the user isn't a participant nothing will happen).
 
 Example: Incrementing counts of custom events
 
@@ -193,22 +193,23 @@ Funtestic.configure do |config|
 end
 ```
 
-### Trial Event Hooks
+### Event Hooks
 
-You can define methods that will be called at the same time as experiment
-alternative participation and goal completion.
+You can define methods that will be called when a user's alternative is selected and when a conversion & conversion attempt are called on Funtestic.
 
 For example:
 
 ``` ruby
 Funtestic.configure do |config|
   config.on_trial_choose   = :log_trial_choice
-  config.on_trial_complete = :log_trial_complete
+  config.on_attempt_reported = :handle_experiment_conversion_attempt
+  config.on_finish_reported = :handle_experiment_conversion
 end
 ```
 
 Set these attributes to a method name available in the same context as the
-`ab_test` method. These methods should accept one argument, a `Trial` instance.
+`ab_test` method (i.e application_controller).
+These first method should accept one argument, a `Trial` instance, the other two accept an alternative_id (int) which is unique id of the alternative of the user to which a conversion/attempt were reported.
 
 ``` ruby
 def log_trial_choose(trial)
@@ -216,9 +217,14 @@ def log_trial_choose(trial)
     [ trial.experiment.name, trial.alternative, current_user.id ]
 end
 
-def log_trial_complete(trial)
-  logger.info "experiment=%s alternative=%s user=%s complete=true" %
-    [ trial.experiment.name, trial.alternative, current_user.id ]
+def handle_experiment_conversion_attempt(alternative_id)
+# Report conversion attempt to Splunk
+EventLog.log_event ExperimentConversionAttemptEvent.new({:group_ids => alternative_id, :user_id => @user_id})
+end
+
+def handle_experiment_conversion(alternative_id)
+# Report conversion to Splunk
+EventLog.log_event ExperimentConversionEvent.new({:group_ids => alternative_id, :user_id => @user_id})
 end
 ```
 
