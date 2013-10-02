@@ -98,6 +98,19 @@ finished("logo_as_thumb_ab_test_17-9-13", {:multiple_conversion => false})
 ```
 When multiple conversion is disabled, calling `report_attempt` or `finished` more than once per user will simply be ignored.
 
+In some cases you may want a user to join an ab test only if he answers a certain criteria -
+for example, only add new visitors to a test. If the user isn't new you want to retrieve his selected alternative (if he joined the test when he was a new visitor) or use a default value in case he never participated.
+For that purpose you can use `get_alternative_for_user_or_default`.
+
+Example: Getting user's alternative without adding him to a test
+```ruby
+ if @is_new_visitor
+      @logo_as_thumb = ab_test("logo_as_thumb_ab_test_17-9-13") == "true"
+    else
+      @logo_as_thumb = get_alternative_for_user_or_default("logo_as_thumb_ab_test_17-9-13", "false") == "true"
+      ...
+```
+
 ## Extras
 
 ### Channels
@@ -195,7 +208,7 @@ end
 
 ### Event Hooks
 
-You can define methods that will be called when a user's alternative is selected and when a conversion & conversion attempt are called on Funtestic.
+You can define methods that will be called when a user's alternative is selected and when a conversion & conversion attempt are reported to Funtestic.
 
 For example:
 
@@ -209,7 +222,7 @@ end
 
 Set these attributes to a method name available in the same context as the
 `ab_test` method (i.e application_controller).
-These first method should accept one argument, a `Trial` instance, the other two accept an alternative_id (int) which is unique id of the alternative of the user to which a conversion/attempt were reported.
+The first method should accept one argument, a `Trial` instance, the other two accept an alternative_id (int) which is the unique id of the alternative of the user to which a conversion/attempt were reported.
 
 ``` ruby
 def log_trial_choose(trial)
