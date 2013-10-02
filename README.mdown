@@ -1,6 +1,6 @@
 # Funtestic
 
-This gem is a copy of [Split](http://github.com/andrew/split) gem, but with several adjustments to our needs.
+This gem is a fork of [Split](http://github.com/andrew/split) gem, with several adjustments to our needs.
 Split is a rack based ab testing framework designed to work with Rails, Sinatra or any other rack based app.
 Split is heavily inspired by the Abingo and Vanity rails ab testing plugins and Resque in its use of Redis.
 Split is designed to be hacker friendly, allowing for maximum customisation and extensibility.
@@ -99,6 +99,24 @@ finished("logo_as_thumb_ab_test_17-9-13", {:multiple_conversion => false})
 When multiple conversion is disabled, calling `report_attempt` or `finished` more than once per user will simply be ignored.
 
 ## Extras
+
+### Channels
+Channels are just additional information which can be assigned to an alternative and later be retrieved by the `Alternative.get_all_historical_alternatives` method (which we use to send lookup data to Splunk).
+
+Example: setting channels for alternatives
+
+```ruby
+config.experiments = {
+      "abtest_test_19-8-13" => {
+          :alternatives => [
+              { :name => "true", :percent => 50, :channel => 123 },
+              { :name => "false", :percent => 50, :channel => 456 }
+          ]
+        },
+```
+
+### Events
+
 
 ### Weighted alternatives
 
