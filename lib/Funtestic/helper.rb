@@ -178,15 +178,15 @@ module Funtestic
     end
 
     def abtest_event_for_alternative(experiment_name, alternative_name, event_data = {})
-      return if exclude_visitor? || Split.configuration.disabled?
+      return if exclude_visitor? || Funtestic.configuration.disabled?
       experiments = Metric.possible_experiments(experiment_name)
 
       if experiments.any? and alternative_name.present?
         track_alternative_event(experiments.first, alternative_name, event_data)
       end
     rescue => e
-      raise unless Split.configuration.db_failover
-      Split.configuration.db_failover_on_db_error.call(e)
+      raise unless Funtestic.configuration.db_failover
+      Funtestic.configuration.db_failover_on_db_error.call(e)
     end
 
     def override_present?(experiment_name)
