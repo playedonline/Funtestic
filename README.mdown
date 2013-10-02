@@ -103,7 +103,7 @@ When multiple conversion is disabled, calling `report_attempt` or `finished` mor
 ### Channels
 Channels are just additional information which can be assigned to an alternative and later be retrieved by the `Alternative.get_all_historical_alternatives` method (which we use to send lookup data to Splunk).
 
-Example: setting channels for alternatives
+Example: Setting channels for alternatives
 
 ```ruby
 config.experiments = {
@@ -117,6 +117,13 @@ config.experiments = {
 
 ### Events
 
+Each alternative also keeps a hash of custom counters called events. You can increment the values of your custom events using `abtest_event`, which will increment the specified counter by the specified amount for the alternative of the user.
+
+Example: Incrementing counts of custom events
+
+```ruby
+abtest_event(abtest_name, {:install_click => count_of_installs})
+```
 
 ### Weighted alternatives
 
