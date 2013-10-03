@@ -110,8 +110,8 @@ describe Funtestic::Configuration do
         end
 
         it "should normalize experiments" do
-          @config.normalized_experiments.should == {:my_experiment => {:alternatives => [{:name => "Control Opt", :percent => 0.67, :channel => nil},
-                                                                                         [{:name => "Alt One", :percent => 0.1, :channel => nil}, {:name => "Alt Two", :percent => 0.23, :channel => nil}]]}, :another_experiment => {:alternatives => ["a", ["b"]]}}
+          @config.normalized_experiments.should == {:my_experiment => {:alternatives => [{:name => "Control Opt", :weight => 0.67, :channel => nil},
+                                                                                         [{:name => "Alt One", :weight => 0.1, :channel => nil}, {:name => "Alt Two", :weight => 0.23, :channel => nil}]]}, :another_experiment => {:alternatives => ["a", ["b"]]}}
         end
 
         it "should recognize metrics" do
@@ -174,6 +174,6 @@ describe Funtestic::Configuration do
       }
     }
 
-    @config.normalized_experiments.should == {:my_experiment => {:alternatives => [{:name => "control_opt", :percent => 0.67, :channel => nil}, [{:name => "second_opt", :percent => 0.1, :channel => nil}, {:name => "third_opt", :percent => 0.23, :channel => nil}]]}}
+    @config.normalized_experiments.should == {:my_experiment => {:alternatives => [{:name => "control_opt", :weight => 0.67, :channel => nil}, [{:name => "second_opt", :weight => 0.1, :channel => nil}, {:name => "third_opt", :weight => 0.23, :channel => nil}]]}}
   end
 end

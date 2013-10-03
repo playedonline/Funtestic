@@ -3,12 +3,12 @@ require_relative "../spec_helper"
 describe Funtestic::Algorithms::Whiplash do
 
   it "should return an algorithm" do
-    experiment = Funtestic::Experiment.find_or_create('link_color', {:name => 'blue', :percent => 1}, {:name => 'red', :percent => 1})
+    experiment = Funtestic::Experiment.find_or_create('link_color', {:name => 'blue', :weight => 1}, {:name => 'red', :weight => 1})
     Funtestic::Algorithms::Whiplash.choose_alternative(experiment).class.should == Funtestic::Alternative
   end
 
   it "should return one of the results" do
-    experiment = Funtestic::Experiment.find_or_create('link_color', {:name => 'blue', :percent => 1}, {:name => 'red', :percent => 1})
+    experiment = Funtestic::Experiment.find_or_create('link_color', {:name => 'blue', :weight => 1}, {:name => 'red', :weight => 1})
     ['red', 'blue'].should include Funtestic::Algorithms::Whiplash.choose_alternative(experiment).name
   end
   

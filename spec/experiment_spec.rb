@@ -276,7 +276,7 @@ describe Funtestic::Experiment do
 
   describe 'specifying weights' do
     let(:experiment_with_weight) {
-      Funtestic::Experiment.find_or_create('link_color', {:name => 'blue', :percent => 1}, {:name =>'red', :percent => 2 })
+      Funtestic::Experiment.find_or_create('link_color', {:name => 'blue', :weight => 1}, {:name =>'red', :weight => 2 })
     }
 
     it "should work for a new experiment" do

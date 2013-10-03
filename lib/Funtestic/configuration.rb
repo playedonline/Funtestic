@@ -139,11 +139,11 @@ module Funtestic
       if num_with_probability.nonzero?
         alternatives = alternatives.map do |v|
           if (name = value_for(v, :name)) && (percent = value_for(v, :percent))
-            { :name => name, :percent => percent / 100.0, :channel => value_for(v, :channel) }
+            { :name => name, :weight => percent / 100.0, :channel => value_for(v, :channel) }
           elsif name = value_for(v, :name)
-            { :name => name, :percent => unassigned_probability, :channel => value_for(v, :channel) }
+            { :name => name, :weight => unassigned_probability, :channel => value_for(v, :channel) }
           else
-            { :name => v, :percent => unassigned_probability, :channel => value_for(v, :channel) }
+            { :name => v, :weight => unassigned_probability, :channel => value_for(v, :channel) }
           end
         end
 

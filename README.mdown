@@ -145,14 +145,30 @@ Perhaps you only want to show an alternative to 10% of your visitors because it 
 To do this you can pass a weight with each alternative in the following ways:
 
 ```ruby
-ab_test('homepage design', {:name => 'Old', :percent => 20}, {:name => 'New', :percent => 2})
+ab_test('homepage design', {:name => 'Old', :weight => 20}, {:name => 'New', :weight => 2})
 
-ab_test('homepage design', 'Old', {:name => 'New', :percent => 0.1})
+ab_test('homepage design', 'Old', {:name => 'New', :weight => 0.1})
 
-ab_test('homepage design', {:name => 'Old', :percent => 10}, 'New')
+ab_test('homepage design', {:name => 'Old', :weight => 10}, 'New')
 ```
 
 This will only show the new alternative to visitors 1 in 10 times, the default weight for an alternative is 1.
+
+### Probability for alternatives
+
+Another way to control the chosen alternative for user is to use percentage.
+
+Example: Setting percentage for alternatives
+
+```ruby
+Funtestic.configuration.experiments[:my_experiment] = {
+        :alternatives => [
+          { :name => "control_opt", :percent => 67 },
+          { :name => "second_opt", :percent => 10 },
+          { :name => "third_opt", :percent => 23 },
+        ],
+      }
+```
 
 ### Overriding alternatives
 

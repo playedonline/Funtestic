@@ -92,12 +92,12 @@ describe Funtestic::Helper do
       @params = {'link_color' => 'blue'}
       alternative = ab_test('link_color', 'blue', 'red')
       alternative.should eql('blue')
-      alternative = ab_test('link_color', {:name => 'blue', :percent => 1}, :name => 'red', :percent => 5)
+      alternative = ab_test('link_color', {:name => 'blue', :weight => 1}, :name => 'red', :weight => 5)
       alternative.should eql('blue')
       @params = {'link_color' => 'red'}
       alternative = ab_test('link_color', 'blue', 'red')
       alternative.should eql('red')
-      alternative = ab_test('link_color', {:name => 'blue', :percent => 5}, :name => 'red', :percent => 1)
+      alternative = ab_test('link_color', {:name => 'blue', :weight => 5}, :name => 'red', :weight => 1)
       alternative.should eql('red')
     end
 
@@ -132,12 +132,12 @@ describe Funtestic::Helper do
     end
 
     it "should allow the share of visitors see an alternative to be specificed" do
-      ab_test('link_color', {:name => 'blue', :percent => 0.8}, {:name => 'red', :percent => 20})
+      ab_test('link_color', {:name => 'blue', :weight => 0.8}, {:name => 'red', :weight => 20})
       ['red', 'blue'].should include(ab_user['link_color'])
     end
 
     it "should allow alternative weighting interface as a single hash" do
-      ab_test('link_color', {:name => 'blue', :percent => 0.01}, :name => 'red', :percent => 0.2)
+      ab_test('link_color', {:name => 'blue', :weight => 0.01}, :name => 'red', :weight => 0.2)
       experiment = Funtestic::Experiment.find('link_color')
       experiment.alternatives.map(&:name).should eql(['blue', 'red'])
       # TODO: persist alternative weights

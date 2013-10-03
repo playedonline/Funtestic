@@ -38,7 +38,7 @@ describe Funtestic::Alternative do
   describe 'weights' do
 
     it "should set the weights" do
-      experiment = Funtestic::Experiment.new('basket_text', :alternatives => [{:name => 'Basket', :percent => 0.6}, {:name=>"Cart", :percent => 0.4}])
+      experiment = Funtestic::Experiment.new('basket_text', :alternatives => [{:name => 'Basket', :weight => 0.6}, {:name=>"Cart", :weight => 0.4}])
       first = experiment.alternatives[0]
       first.name.should == 'Basket'
       first.weight.should == 0.6
