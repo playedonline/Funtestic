@@ -34,10 +34,6 @@ describe Funtestic::Experiment do
       experiment.alternatives.collect{|a| a.name}.should == ['Basket', 'Cart']
     end
 
-    it "should be resettable by default" do
-      experiment.resettable.should be_false
-    end
-
     it "should save to redis" do
       experiment.save
       Funtestic.redis.exists('basket_text').should be true
@@ -122,23 +118,9 @@ describe Funtestic::Experiment do
        experiment.algorithm.should == Funtestic::Algorithms::Whiplash
     end
 
-    it "should be possible to make an experiment not resettable" do
-      experiment = Funtestic::Experiment.new('basket_text', :alternatives => ['Basket', "Cart"], :resettable => false)
-      experiment.resettable.should be_false
-    end
   end
 
   describe 'persistent configuration' do
-
-    it "should persist resettable in redis" do
-      experiment = Funtestic::Experiment.new('basket_text', :alternatives => ['Basket', "Cart"], :resettable => false)
-      experiment.save
-
-      e = Funtestic::Experiment.find('basket_text')
-      e.should == experiment
-      e.resettable.should be_false
-
-    end
 
     it "should persist algorithm in redis" do
       experiment = Funtestic::Experiment.new('basket_text', :alternatives => ['Basket', "Cart"], :algorithm => Funtestic::Algorithms::Whiplash)

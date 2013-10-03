@@ -80,7 +80,6 @@ describe Funtestic::Configuration do
                 - Control Opt
                 - Alt One
                 - Alt Two
-              resettable: false
             eos
           @config.experiments = YAML.load(experiments_yaml)
         end
@@ -101,7 +100,6 @@ describe Funtestic::Configuration do
                   percent: 10
                 - name: Alt Two
                   percent: 23
-              resettable: false
               metric: my_metric
             another_experiment:
               alternatives:
@@ -133,7 +131,6 @@ describe Funtestic::Configuration do
                 - Control Opt
                 - Alt One
                 - Alt Two
-              :resettable: false
             eos
           @config.experiments = YAML.load(experiments_yaml)
         end

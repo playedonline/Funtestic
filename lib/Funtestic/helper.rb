@@ -59,10 +59,6 @@ module Funtestic
       end
     end
 
-    def reset!(experiment)
-      ab_user.delete(experiment.key)
-    end
-
     def attempt_for_experiment(experiment, options = {:multiple_conversion => true})
       return true unless experiment.winner.nil?
       multiple_conversion = options[:multiple_conversion]
@@ -80,11 +76,10 @@ module Funtestic
       end
     end
 
-    def finish_experiment(experiment, options = {:reset => true, :multiple_conversion => true})
+    def finish_experiment(experiment, options = {:multiple_conversion => true})
       return true unless experiment.winner.nil?
-      should_reset = experiment.resettable? && options[:reset]
       multiple_conversion = options[:multiple_conversion]
-      if !multiple_conversion  && ab_user[experiment.finished_key] && !should_reset
+      if !multiple_conversion  && ab_user[experiment.finished_key]
         return true
       else
         alternative_name = ab_user[experiment.key]
@@ -92,11 +87,7 @@ module Funtestic
 
         if (ab_user[experiment.finished_key] != true)
           trial.complete!
-          if should_reset
-            reset!(experiment)
-          else
-            ab_user[experiment.finished_key] = true
-          end
+          ab_user[experiment.finished_key] = true
         else
           trial.conversion!
         end
@@ -143,7 +134,7 @@ module Funtestic
 
     end
 
-    def finished(metric_descriptor, options = {:reset => true,:multiple_conversion => true})
+    def finished(metric_descriptor, options = {:multiple_conversion => true})
       return if exclude_visitor? || Funtestic.configuration.disabled?
       metric_descriptor, goals = normalize_experiment(metric_descriptor)
       experiments = Metric.possible_experiments(metric_descriptor)

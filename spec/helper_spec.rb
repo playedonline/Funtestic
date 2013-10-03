@@ -275,7 +275,6 @@ describe Funtestic::Helper do
       Funtestic.configuration.experiments = {
         :my_experiment => {
           :alternatives => ["one", "two"],
-          :resettable => false,
         }
       }
       alternative = ab_test(:my_experiment)
@@ -340,7 +339,6 @@ describe Funtestic::Helper do
         :my_exp => {
           :alternatives => ["one", "two"],
           :metric => :my_metric,
-          :resettable => false,
         }
       }
       alternative_name = ab_test(:my_exp)

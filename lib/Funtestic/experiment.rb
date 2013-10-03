@@ -2,15 +2,10 @@ module Funtestic
   class Experiment
     attr_accessor :name
     attr_writer :algorithm
-    attr_accessor :resettable
     attr_accessor :goals
     attr_accessor :alternatives
 
     def initialize(name, options = {})
-      options = {
-          :resettable => false, # Changed from original code - default is now false
-      }.merge(options)
-
       @name = name.to_s
 
       alts = options[:alternatives] || []
@@ -26,7 +21,6 @@ module Funtestic
         if exp_config
           alts = load_alternatives_from_configuration
           options[:goals] = load_goals_from_configuration
-          options[:resettable] = exp_config[:resettable]
           options[:algorithm] = exp_config[:algorithm]
         end
       end
@@ -34,7 +28,6 @@ module Funtestic
       self.alternatives = alts
       self.goals = options[:goals]
       self.algorithm = options[:algorithm]
-      self.resettable = options[:resettable]
     end
 
     def self.all
@@ -92,7 +85,6 @@ module Funtestic
         end
       end
 
-      Funtestic.redis.hset(experiment_config_key, :resettable, resettable)
       Funtestic.redis.hset(experiment_config_key, :algorithm, algorithm.to_s)
       self
     end
@@ -125,10 +117,6 @@ module Funtestic
 
     def algorithm=(algorithm)
       @algorithm = algorithm.is_a?(String) ? algorithm.constantize : algorithm
-    end
-
-    def resettable=(resettable)
-      @resettable = resettable.is_a?(String) ? resettable == 'true' : resettable
     end
 
     def alternatives=(alts)
@@ -259,10 +247,6 @@ module Funtestic
       "#{key}:attempt"
     end
 
-    def resettable?
-      resettable
-    end
-
     def reset
       alternatives.each(&:reset)
       reset_winner
@@ -296,7 +280,6 @@ module Funtestic
 
     def load_from_redis
       exp_config = Funtestic.redis.hgetall(experiment_config_key)
-      self.resettable = exp_config['resettable']
       self.algorithm = exp_config['algorithm']
       self.alternatives = load_alternatives_from_redis
       self.goals = load_goals_from_redis

@@ -315,15 +315,13 @@ end
 ### Experiment configuration
 
 Instead of providing the experiment options inline, you can store them
-in a hash. This hash can control your experiment's alternatives, weights,
-algorithm and if the experiment resets once finished:
+in a hash. This hash can control your experiment's alternatives, weights and algorithm:
 
 ```ruby
 Funtestic.configure do |config|
   config.experiments = {
     "my_first_experiment" => {
-      :alternatives => ["a", "b"],
-      :resettable => false
+      :alternatives => ["a", "b"]
     },
     "my_second_experiment" => {
       :algorithm => 'Funtestic::Algorithms::Whiplash',
@@ -357,7 +355,6 @@ my_second_experiment:
       percent: 67
     - name: b
       percent: 33
-  resettable: false
 ```
 
 This simplifies the calls from your code:
@@ -544,24 +541,13 @@ Users may also write their own algorithms. The default algorithm may be specifie
 
 Ryan bates has produced an excellent 10 minute screencast about split on the Railscasts site: [A/B Testing with Split](http://railscasts.com/episodes/331-a-b-testing-with-split)
 
-## Development
+## Development (Split)
 
 Source hosted at [GitHub](http://github.com/andrew/split).
 Report Issues/Feature requests on [GitHub Issues](http://github.com/andrew/split/issues).
 Discussion at [Google Groups](https://groups.google.com/d/forum/split-ruby)
 
 Tests can be ran with `rake spec`
-
-### Note on Patches/Pull Requests
-
- * Fork the project.
- * Make your feature addition or bug fix.
- * Add tests for it. This is important so I don't break it in a
-   future version unintentionally.
- * Add documentation if necessary.
- * Commit, do not mess with rakefile, version, or history.
-   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
- * Send a pull request. Bonus points for topic branches.
 
 ## Copyright
 
