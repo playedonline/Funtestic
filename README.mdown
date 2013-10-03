@@ -22,10 +22,10 @@ You now have a Redis daemon running on 6379.
 
 ## Setup
 
-Add Funtestic to your Gemfile (use the latest version):
+Add Funtestic to your Gemfile:
 
 ``` ruby
-gem 'funtestic', "0.0.11", :git => 'git@github.com:playedonline/Funtestic.git', :require => 'Funtestic/dashboard'
+gem 'funtestic', :git => 'git@github.com:playedonline/Funtestic.git', :require => 'Funtestic/dashboard'
 ```
 
 Then run:
@@ -264,7 +264,7 @@ Funtestic comes with a Sinatra-based front end to get an overview of how your ex
 If you are using Rails 3: You can mount this inside your app routes by first adding this to the Gemfile:
 
 ```ruby
-gem 'funtestic', "0.0.11", :git => 'git@github.com:playedonline/Funtestic.git', :require => 'Funtestic/dashboard'
+gem 'funtestic', :git => 'git@github.com:playedonline/Funtestic.git', :require => 'Funtestic/dashboard'
 ```
 
 Then adding this to config/routes.rb
