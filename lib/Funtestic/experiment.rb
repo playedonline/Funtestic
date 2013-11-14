@@ -4,6 +4,7 @@ module Funtestic
     attr_writer :algorithm
     attr_accessor :goals
     attr_accessor :alternatives
+    attr_accessor :max_participants
 
     def initialize(name, options = {})
       @name = name.to_s
@@ -22,12 +23,14 @@ module Funtestic
           alts = load_alternatives_from_configuration
           options[:goals] = load_goals_from_configuration
           options[:algorithm] = exp_config[:algorithm]
+          options[:max_participants] = exp_config[:max_participants]
         end
       end
 
       self.alternatives = alts
       self.goals = options[:goals]
       self.algorithm = options[:algorithm]
+      self.max_participants = options[:max_participants]
     end
 
     def self.all
