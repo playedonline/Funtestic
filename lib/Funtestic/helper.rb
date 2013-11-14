@@ -285,9 +285,15 @@ module Funtestic
           if ab_user[experiment.key]
             ret = ab_user[experiment.key]
           else
-            trial.choose!
-            call_trial_choose_hook(trial)
-            ret = begin_experiment(experiment, trial.alternative.name)
+
+            if experiment.max_participants > experiment.participant_count
+              trial.choose!
+              call_trial_choose_hook(trial)
+              ret = begin_experiment(experiment, trial.alternative.name)
+            elsif experiment.end_time.nil?
+              experiment.set_end_time(experiment.time_to_finish.from_now)
+            end
+
           end
         end
       end

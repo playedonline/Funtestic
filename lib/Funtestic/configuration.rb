@@ -117,6 +117,14 @@ module Funtestic
           if goals = value_for(settings, :goals)
             experiment_config[experiment_name.to_sym][:goals] = goals
           end
+
+          if max_participants = value_for(settings, :max_participants)
+              experiment_config[experiment_name.to_sym][:max_participants] = max_participants
+          end
+
+          if time_to_finish = value_for(settings, :time_to_finish)
+            experiment_config[experiment_name.to_sym][:time_to_finish] = time_to_finish
+          end
         end
 
         experiment_config

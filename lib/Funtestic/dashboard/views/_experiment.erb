@@ -13,7 +13,8 @@
 
     <% if goal.nil? %>
       <div class='inline-controls'>
-        <small><%= experiment.start_time ? experiment.start_time.strftime('%d-%m-%Y %H:%M:%S %z') : 'Unknown' %></small>
+        <small>Started: <%= experiment.start_time ? experiment.start_time.strftime('%d-%m-%Y %H:%M:%S %z') : 'Unknown' %></small>
+        <small>Ends: <%= experiment.end_time ? experiment.end_time.strftime('%d-%m-%Y %H:%M:%S %z') : 'Unknown' %></small>
         <form action="<%= url "/reset/#{experiment.name}" %>" method='post' onclick="return confirmReset()">
           <input type="submit" value="Reset Data">
         </form>

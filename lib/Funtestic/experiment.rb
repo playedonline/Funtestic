@@ -5,6 +5,7 @@ module Funtestic
     attr_accessor :goals
     attr_accessor :alternatives
     attr_accessor :max_participants
+    attr_accessor :time_to_finish
 
     def initialize(name, options = {})
       @name = name.to_s
@@ -24,6 +25,7 @@ module Funtestic
           options[:goals] = load_goals_from_configuration
           options[:algorithm] = exp_config[:algorithm]
           options[:max_participants] = exp_config[:max_participants]
+          options[:time_to_finish] = exp_config[:time_to_finish]
         end
       end
 
@@ -31,6 +33,7 @@ module Funtestic
       self.goals = options[:goals]
       self.algorithm = options[:algorithm]
       self.max_participants = options[:max_participants]
+      self.time_to_finish = options[:time_to_finish]
     end
 
     def self.all
@@ -180,6 +183,10 @@ module Funtestic
       self.class.find_start_time_by_name_and_version @name, self.version
     end
 
+    def end_time
+      self.class.find_end_time_by_name_and_version @name, self.version
+    end
+
     def self.find_start_time_by_name_and_version (name, version)
       t = Funtestic.redis.hget(:experiment_start_times, "#{name}:#{version}")
 
@@ -263,8 +270,8 @@ module Funtestic
       Funtestic.redis.hset(:experiment_start_times, "#{@name}:#{self.version}" , Time.now.to_i)
     end
 
-    def set_end_time
-      Funtestic.redis.hset(:experiment_end_times, "#{@name}:#{self.version}" , Time.now.to_i)
+    def set_end_time(timestamp = Time.now.to_i)
+      Funtestic.redis.hset(:experiment_end_times, "#{@name}:#{self.version}" , timestamp)
     end
 
     def delete
