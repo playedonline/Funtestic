@@ -3,7 +3,7 @@
       completed and conversion rate currently in the system.</p>
 
     <% @experiments.each do |experiment| %>
-        <% if experiment.goals.empty? %>
+        <% if experiment.goals.blank? %>
             <% if (experiment.name =~ /HP Order -/).present? || experiment.alternatives.first.events_hash.keys.length > 0 %>
                 <%= erb :_experiment_hp_order, :locals => {:goal => nil, :experiment => experiment} %>
             <% else %>
