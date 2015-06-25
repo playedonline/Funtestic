@@ -5,9 +5,16 @@ module Funtestic
     class CookieAdapter
 
       EXPIRES = Time.now + 31536000 # One year from now
+      PREFIX = 'funtestic'
 
       def initialize(context)
-        @cookies = context.send(:cookies)
+        @is_sinatra = context.is_a?(Sinatra::Base)
+        if @is_sinatra
+          @context = context
+          @cookies = @context.request.cookies
+        else
+          @cookies = context.send(:cookies)
+        end
       end
 
       def [](key)
@@ -29,16 +36,23 @@ module Funtestic
       private
 
       def set_cookie(value)
-        @cookies[:funtestic] = {
-          :value => JSON.generate(value),
-          :expires => EXPIRES
+        new_cooike_content= {
+            value: JSON.generate(value),
+            expires: EXPIRES
         }
+
+        if @is_sinatra
+          @context.response.set_cookie PREFIX, new_cooike_content.merge(path: '/')
+          @cookies = @context.request.cookies
+        else
+          @cookies[PREFIX] = new_cooike_content
+        end
       end
 
       def hash
-        if @cookies[:funtestic]
+        if @cookies[PREFIX]
           begin
-            JSON.parse(@cookies[:funtestic])
+            JSON.parse(@cookies[PREFIX])
           rescue JSON::ParserError
             {}
           end

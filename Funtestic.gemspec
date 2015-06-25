@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'redis',           '>= 2.1'
   spec.add_dependency 'redis-namespace', '>= 1.1.0'
   spec.add_dependency 'sinatra',         '>= 1.2.6'
+  spec.add_dependency 'sinatra-contrib'
   spec.add_dependency 'simple-random'
 
   # Ruby 1.8 doesn't include JSON in the std lib

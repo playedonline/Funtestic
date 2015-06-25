@@ -41,6 +41,9 @@
       <% end %>
       <!--<th>Confidence</th>-->
       <th>Finish</th>
+      <% if Funtestic.configuration.store_override %>
+        <th>Test</th>
+      <% end %>
     </tr>
 
     <% total_participants = total_completed = total_unfinished = total_conversions = total_attempts = 0 %>
@@ -95,6 +98,19 @@
             </form>
           <% end %>
         </td>
+
+          <% if Funtestic.configuration.store_override %>
+            <td>
+              <% if ab_user[experiment.name] == alternative.name %>
+                Testing
+              <% else %>
+                  <form action="<%= url "enroll/#{experiment.name}" %>" method='get'>
+                    <input type='hidden' name='<%= experiment.name %>' value='<%= alternative.name %>'>
+                    <input type="submit" value="Test this" class="green">
+                  </form>
+              <% end %>
+            </td>
+          <% end %>
       </tr>
 
       <% total_participants += alternative.participant_count %>
@@ -121,6 +137,15 @@
 
       <!--<td>N/A</td>-->
       <td>N/A</td>
+      <% if Funtestic.configuration.store_override %>
+          <td>
+            <% if ab_user[experiment.name].present?%>
+                <form action="<%= url "enroll/#{experiment.name}" %>" method='get'>
+                  <input type="submit" value="Exit test" class="green">
+                </form>
+            <% end %>
+          </td>
+      <% end %>
     </tr>
   </table>
 </div>
