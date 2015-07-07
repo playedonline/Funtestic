@@ -34,6 +34,9 @@ module Funtestic
       control ||= experiment.control && experiment.control.name
 
         ret = if Funtestic.configuration.enabled
+          if (experiment.new_record?)
+            call_experiment_created_hook(experiment)
+          end
           experiment.save
           start_trial( Trial.new(:experiment => experiment) )
         else
@@ -319,6 +322,11 @@ module Funtestic
     def call_trial_choose_hook(trial)
       send(Funtestic.configuration.on_trial_choose, trial) if Funtestic.configuration.on_trial_choose
     end
+
+    def call_experiment_created_hook(experiment)
+      send(Funtestic.configuration.on_experiment_created, experiment) if Funtestic.configuration.on_experiment_created
+    end
+
 
     #def call_trial_complete_hook(trial)
     #  send(Funtestic.configuration.on_trial_complete, trial) if Funtestic.configuration.on_trial_complete

@@ -16,6 +16,8 @@ module Funtestic
     attr_accessor :on_trial_complete
     attr_accessor :on_attempt_reported
     attr_accessor :on_finish_reported
+    attr_accessor :on_experiment_created
+
 
     attr_reader :experiments
 
