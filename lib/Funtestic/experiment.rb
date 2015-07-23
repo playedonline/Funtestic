@@ -275,7 +275,7 @@ module Funtestic
     end
 
     def delete
-      set_end_time
+      set_end_time if end_time.blank?
       alternatives.each(&:delete)
       reset_winner
       Funtestic.redis.srem(:experiments, name)

@@ -301,7 +301,8 @@ module Funtestic
               call_trial_choose_hook(trial)
               ret = begin_experiment(experiment, trial.alternative.name)
             elsif experiment.end_time.nil?
-              experiment.set_end_time(experiment.time_to_finish.from_now)
+              # experiment.set_end_time(experiment.time_to_finish.from_now)
+              experiment.set_end_time
             end
 
           end
